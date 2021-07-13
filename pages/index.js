@@ -1,7 +1,7 @@
 
 import Box from "../src/components/Box";
 import MainGrid from "../src/components/MainGrid";
-import ProfileRelationsBoxWarpper from "../src/components/ProfileRelations";
+import { ProfileRelationsBoxWarpper } from "../src/components/ProfileRelations";
 import { AlurakutMenu, OrkutNostalgicIconSet } from "../src/lib/AlurakutCommons";
 
 
