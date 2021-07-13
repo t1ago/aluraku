@@ -1,8 +1,8 @@
 
-import Box from "./src/components/Box";
-import MainGrid from "./src/components/MainGrid";
-import { ProfileRelationsBoxWarpper } from "./src/components/ProfileRelations";
-import { AlurakutMenu, OrkutNostalgicIconSet } from "./src/lib/AlurakutCommons";
+import Box from "../src/components/Box";
+import MainGrid from "../src/components/MainGrid";
+import { ProfileRelationsBoxWarpper } from "../src/components/ProfileRelations";
+import { AlurakutMenu, OrkutNostalgicIconSet } from "../src/lib/AlurakutCommons";
 
 const ProfileSideBar = (props) => {
   return (
@@ -41,8 +41,8 @@ export default function Home() {
             <ul>
               {peopleFavorite.map((person) => {
                 return (
-                  <li>
-                    <a href={`/users/${person}`} key={person}>
+                  <li key={person}>
+                    <a href={`/users/${person}`} >
                       <img src={`https://github.com/${person}.png`} />
                       <span>{person}</span>
                     </a>
