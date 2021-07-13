@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import Box from "../Box";
 
-export default ProfileRelationsBoxWarpper = styled(Box)`
+export const ProfileRelationsBoxWarpper = styled(Box)`
   ul {
     display: grid;
     grid-gap: 8px;
