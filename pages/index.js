@@ -44,7 +44,21 @@ export default function Home() {
   const githubUser = 't1ago';
   const [communities, setNewCommunity] = React.useState(Array.from(communitiesMock));
   const peopleFavorite = Array.from(peopleMock);
+  const [followers, setFollowers] = React.useState([]);
 
+
+  React.useEffect(async () => {
+    const serverData = await fetch('https://api.github.com/users/peas/followers');
+    const data = await serverData.json();
+    setFollowers(data.map((follower) => {
+      return {
+        id: follower.id,
+        link: follower.html_url,
+        image: `${follower.html_url}.png`,
+        name: follower.login
+      }
+    }))
+  }, [])
 
   return (
     <>
@@ -83,6 +97,8 @@ export default function Home() {
           </Box>
         </div>
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
+
+          <BoxLinkItem title={`Meu${followers.length > 1 ? 's' : ''} seguidore${followers.length > 1 ? 's' : ''}`} items={followers} />
 
           <BoxLinkItem title={`Meus amigo${peopleFavorite.length > 1 ? 's' : ''}`} items={peopleFavorite} />
 
