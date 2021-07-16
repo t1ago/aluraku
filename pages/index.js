@@ -4,8 +4,6 @@ import Box from "../src/components/Box";
 import BoxLinkItem from '../src/components/BoxLinkItem';
 import MainGrid from "../src/components/MainGrid";
 import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from "../src/lib/AlurakutCommons";
-import communitiesMock from "../src/mock/communitiesMock.json";
-import peopleMock from "../src/mock/peopleMock.json";
 
 const ProfileSideBar = (props) => {
   return (
@@ -26,38 +24,69 @@ const ProfileSideBar = (props) => {
 }
 
 export default function Home() {
-  const handleNewCommunity = (event) => {
+  const handleNewCommunity = async (event) => {
     event.preventDefault();
     const data = new FormData(event.target);
 
     const newCommunity = {
-      id: new Date().toISOString(),
       link: `/community/${data.get('title')}`,
       name: data.get('title'),
       image: data.get('image')
     }
 
-    setNewCommunity([...communities, newCommunity]);
+    const savedCommunity = await fetch('/api/createCommunity', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newCommunity)
+    });
+
+    newCommunity.id = savedCommunity.id;
+    setCommunity([...communities, newCommunity]);
     event.target.reset();
   }
 
   const githubUser = 't1ago';
-  const [communities, setNewCommunity] = React.useState(Array.from(communitiesMock));
-  const peopleFavorite = Array.from(peopleMock);
+  const [communities, setCommunity] = React.useState([]);
+  const [peopleFavorite, setPeopleFavorite] = React.useState([]);
   const [followers, setFollowers] = React.useState([]);
 
 
   React.useEffect(async () => {
-    const serverData = await fetch('https://api.github.com/users/peas/followers');
-    const data = await serverData.json();
-    setFollowers(data.map((follower) => {
+    let data = await fetch('/api/listAllFollowers')
+    data = await data.json();
+    setFollowers(data.map((value) => {
       return {
-        id: follower.id,
-        link: follower.html_url,
-        image: `${follower.html_url}.png`,
-        name: follower.login
+        id: value.id,
+        link: value.html_url,
+        image: `${value.html_url}.png`,
+        name: value.login
       }
     }))
+
+    console.log(data);
+    data = await fetch('/api/listAllCommunities');
+    data = await data.json();
+    setCommunity(data.map((value) => {
+      return {
+        id: value.id,
+        link: value.link,
+        image: value.imageUrl,
+        name: value.title
+      }
+    }))
+
+    data = await fetch('/api/listAllPeopleFromCommunities');
+    data = await data.json();
+    setPeopleFavorite(data.map((value) => {
+      return {
+        id: value.id,
+        link: value.link,
+        image: value.imageUrl,
+        name: value.title
+      }
+    }));
   }, [])
 
   return (
