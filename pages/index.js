@@ -1,5 +1,8 @@
 
+import { decode } from 'jsonwebtoken';
+import { parseCookies } from 'nookies';
 import React from 'react';
+import { verify } from '../src/api/login';
 import Box from "../src/components/Box";
 import BoxLinkItem from '../src/components/BoxLinkItem';
 import MainGrid from "../src/components/MainGrid";
@@ -23,7 +26,7 @@ const ProfileSideBar = (props) => {
   );
 }
 
-export default function Home() {
+export default function Home(props) {
   const handleNewCommunity = async (event) => {
     event.preventDefault();
     const data = new FormData(event.target);
@@ -47,7 +50,11 @@ export default function Home() {
     event.target.reset();
   }
 
-  const githubUser = 't1ago';
+  const handleLogout = () => {
+
+  }
+
+  const githubUser = props.githubUser;
   const [communities, setCommunity] = React.useState([]);
   const [peopleFavorite, setPeopleFavorite] = React.useState([]);
   const [followers, setFollowers] = React.useState([]);
@@ -137,4 +144,28 @@ export default function Home() {
       </MainGrid>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+
+  const userToken = parseCookies(context).USER_TOKEN;
+  const result = await verify(userToken);
+  console.log(result.isAuthenticated);
+
+  if (result.isAuthenticated) {
+    const tokenDecoded = decode(userToken);
+
+    return {
+      props: {
+        githubUser: tokenDecoded.githubUser
+      }
+    }
+  } else {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false
+      }
+    }
+  }
 }
